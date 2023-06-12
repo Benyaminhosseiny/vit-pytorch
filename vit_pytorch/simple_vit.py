@@ -81,6 +81,7 @@ class Transformer(nn.Module):
 class SimpleViT(nn.Module):
     def __init__(self, *, image_size, patch_size, num_classes, dim, depth, heads, mlp_dim, channels = 3, dim_head = 64, with_classifier = True):
         super().__init__()
+        self.with_classifier = with_classifier
         image_height, image_width = pair(image_size)
         patch_height, patch_width = pair(patch_size)
 
@@ -112,7 +113,7 @@ class SimpleViT(nn.Module):
         x = rearrange(x, 'b ... d -> b (...) d') + pe
 
         x = self.transformer(x)
-        if with_classifier:
+        if self.with_classifier:
             x = x.mean(dim = 1)
 
             x = self.to_latent(x)
